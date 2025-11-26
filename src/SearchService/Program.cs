@@ -3,8 +3,11 @@ using Polly;
 using Polly.Extensions.Http;
 using SearchService.Data;
 using SearchService.Services;
+using MassTransit;
 
 var builder = WebApplication.CreateBuilder(args);
+
+
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -12,6 +15,14 @@ builder.Services.AddControllers();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddHttpClient<AuctionServiceHttpClient>().AddPolicyHandler(GetPolicy());
+
+builder.Services.AddMassTransit(x =>
+{
+   x.UsingRabbitMq((context, cfg) =>
+   {
+       cfg.ConfigureEndpoints(context);
+   });
+});
 
 WebApplication app = builder.Build();
 

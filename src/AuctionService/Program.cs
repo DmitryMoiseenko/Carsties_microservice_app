@@ -1,17 +1,28 @@
 using AuctionService.Data;
+using MassTransit;
 using Microsoft.EntityFrameworkCore;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+
 builder.Services.AddDbContext<AuctionDbContext>(opt =>
 {
     opt.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
-var app = builder.Build();
+builder.Services.AddMassTransit(x =>
+{
+   x.UsingRabbitMq((context, cfg) =>
+   {
+       cfg.ConfigureEndpoints(context);
+   });
+});
+
+WebApplication app = builder.Build();
 
 // Configure the HTTP request pipeline.
 app.UseAuthorization();
