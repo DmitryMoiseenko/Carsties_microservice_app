@@ -4,7 +4,7 @@ services:
     environment:
       - POSTGRES_PASSWORD=postgrespw
     ports:
-      - 5432:5432
+      - 5411:5432
     volumes:
       - /var/lib/postgresql/data
   mongodb:
@@ -21,3 +21,4 @@ services:
     ports:
       - 15672:15672
       - 5672:5672      
+
